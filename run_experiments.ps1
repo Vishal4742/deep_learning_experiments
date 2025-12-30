@@ -4,26 +4,45 @@ $ErrorActionPreference = "Continue"
 Remove-Item Env:\PYTHONHOME -ErrorAction SilentlyContinue
 Remove-Item Env:\PYTHONPATH -ErrorAction SilentlyContinue
 
+# Create Output directory if it doesn't exist
+if (!(Test-Path "Outputs")) {
+    New-Item -ItemType Directory -Force -Path "Outputs" | Out-Null
+}
 
 function Run-Experiment {
     param (
         [string]$Script,
         [string]$OutputLog
     )
+    $ScriptPath = "Programs\$Script"
+    $OutputPath = "Outputs\$OutputLog"
+    $TempLog = "$OutputPath.tmp"
+    
+    # Check if script exists
+    if (!(Test-Path $ScriptPath)) {
+        Write-Error "Script not found: $ScriptPath"
+        return
+    }
+
     Write-Host "Running $Script..."
-    $TempLog = "$OutputLog.tmp"
     
     # Run python via cmd to capture raw output without PowerShell error wrapping
-    cmd /c "py -3.13 $Script > $TempLog 2>&1"
+    # Note: We run from root, so path to script is Programs\script.py
+    # Output images will be saved in root by default since cwd is root. We will move them to Outputs/ after execution.
+    cmd /c "py -3.13 $ScriptPath > $TempLog 2>&1"
     
     # Filter out the benign warnings and save to final log
     Get-Content $TempLog | Where-Object { 
         $_ -notmatch "Could not find platform independent libraries" -and 
         $_ -notmatch "<prefix>" 
-    } | Set-Content $OutputLog
+    } | Set-Content $OutputPath
     
     Remove-Item $TempLog
-    Write-Host "$Script Done. Output saved to $OutputLog"
+    
+    # Move any generated .png files to Outputs directory
+    Move-Item *.png Outputs/ -ErrorAction SilentlyContinue
+    
+    Write-Host "$Script Done. Output saved to $OutputPath"
 }
 
 Write-Host "Starting Deep Learning Experiments Execution (Clean Logs)..."
