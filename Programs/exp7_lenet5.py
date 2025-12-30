@@ -30,13 +30,13 @@ model = Sequential([
     Conv2D(6, (5, 5), activation='tanh', padding='same'),
     
     # S2: Avg Pooling 2x2
-    AveragePooling2D(),
+    AveragePooling2D(pool_size=(2, 2)),
     
     # C3: 16 filters, 5x5 kernel
     Conv2D(16, (5, 5), activation='tanh'),
     
     # S4: Avg Pooling 2x2
-    AveragePooling2D(),
+    AveragePooling2D(pool_size=(2, 2)),
     
     # C5: 120 filters, 5x5 kernel (becomes fully connected if input size matches)
     Conv2D(120, (5, 5), activation='tanh'),
