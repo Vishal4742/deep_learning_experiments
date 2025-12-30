@@ -1,0 +1,12 @@
+Experiment 1: Comparing Activation Functions on Iris Dataset
+
+Training with sigmoid activation...
+Activation: sigmoid - Test Accuracy: 0.8667
+
+Training with tanh activation...
+Activation: tanh - Test Accuracy: 1.0000
+
+Training with relu activation...
+Activation: relu - Test Accuracy: 1.0000
+
+Results saved to exp1_results.png

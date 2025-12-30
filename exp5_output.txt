@@ -1,0 +1,2 @@
+Experiment 5: Data Augmentation Demonstration
+Augmented images saved to exp5_augmentation_demo.png
